@@ -1,0 +1,10 @@
+torch==1.1
+torchvision
+ninja
+yacs
+cython
+matplotlib
+tqdm
+easydict
+coloredlogs
+tensorboardX
