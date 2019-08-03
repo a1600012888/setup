@@ -12,7 +12,9 @@ sudo cp .tmux.conf ~
 sudo cp .bashrc ~
 sudo cp .profile ~
 
-pip install -r ./requirements.txt
+# pip install -r ./requirements.txt
+pip install --extra-index-url https://developer.download.nvidia.com/compute/redist/cuda/10.0 nvidia-dali --user
+
 
 cd ~/
 git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
