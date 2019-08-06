@@ -15,8 +15,10 @@ sudo cp .profile ~
 pip install -r ./requirements.txt --user
 pip install --extra-index-url https://developer.download.nvidia.com/compute/redist/cuda/10.0 nvidia-dali --user
 
-pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp37-cp37m-linux_x86_64.whl
-pip3 install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp37-cp37m-linux_x86_64.whl
+
+# pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp37-cp37m-linux_x86_64.whl
+# pip3 install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp37-cp37m-linux_x86_64.whl
+pip install torch torchvision --user
 # install cvpack ...
 cd ~/.local/lib/python3.7/site-packages
 ln -s /rscratch/tyz/tylib/tylib/ ./
