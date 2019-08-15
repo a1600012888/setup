@@ -1,8 +1,9 @@
-#cd /rscratch/tyz/
 #conda activate maskrcnn_benchmark
+cd /rscratch/tyz/
 conda install ipython
 pip install ninja yacs cython matplotlib tqdm opencv-python --user
 pip install protobuf pillow --user
+pip install torch torchvision --user
 
 export INSTALL_DIR=$PWD
 cd cocoapi/PythonAPI
