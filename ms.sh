@@ -21,6 +21,15 @@ echo copying data
 cp -r ~/container/v-zhexu/wiki_book_32768 ~/data/
 cp -r ~/container/v-zhexu/glue-32768-fast ~/data/
 
+echo copying models
+
+mkdir ~/models
+cp ~/container/v-tianyz/models/SE-F-SE-F-16-roberta_base-03768-p512-b256-20w.pt  ./models
+cp ~/container/v-tianyz/models/SE-F-SE-AVG-16-roberta_base-03768-p512-b256-20w.pt ./models
+cp ~/container/v-tianyz/models/baseline-roberta_base-03768-p512-b256-20w.pt ./models
+cp ~/container/v-tianyz/models/masker-Robera-base-masker-32768-p512-b256-c0.0001-20w.pt ./models
+cp ~/container/v-tianyz/models/masker-Robera-base-masker-32768-p512-b256-c0.00003-20w.pt ./models
+
 
 bash ms_lib.sh
 
