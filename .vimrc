@@ -1,248 +1,382 @@
-" my stuff
-filetype plugin indent on
-" Highlighting the current line by \c
-":hi CursorLine   cterm=NONE ctermbg=0.9 ctermfg=white guibg=darkred guifg=white
-":nnoremap <Leader>c :set cursorline!<CR>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Maintainer: 
+"       Amir Salihefendic — @amix3k
+"
+" Awesome_version:
+"       Get this config, nice color schemes and lots of plugins!
+"
+"       Install the awesome version from:
+"
+"           https://github.com/amix/vimrc
+"
+" Sections:
+"    -> General
+"    -> VIM user interface
+"    -> Colors and Fonts
+"    -> Files and backups
+"    -> Text, tab and indent related
+"    -> Visual mode related
+"    -> Moving around, tabs and buffers
+"    -> Status line
+"    -> Editing mappings
+"    -> vimgrep searching and cope displaying
+"    -> Spell checking
+"    -> Misc
+"    -> Helper functions
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Highligh that stays at the line by \l toggle
-:nnoremap <silent> <Leader>l ml:execute 'match Search /\%'.line('.').'l/'<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Sets how many lines of history VIM has to remember
+set history=500
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" :W sudo saves the file 
+" (useful for handling the permission-denied error)
+command W w !sudo tee % > /dev/null
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set 7 lines to the cursor - when moving vertically using j/k
+set so=7
 
+" Avoid garbled characters in Chinese language windows OS
+let $LANG='en' 
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 
+" Turn on the Wild menu
+set wildmenu
 
-
-
-set t_Co=256
-"colorscheme leo
-"colorscheme desert256
-
-" When started as "evim", evim.vim will already have done these settings.
-if v:progname =~? "evim"
-  finish
-endif
-
-" Use Vim settings, rather then Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
-set nocompatible
-
-" allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
-if has("vms")
-  set nobackup    " do not keep a backup file, use versions instead
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
 else
-  set backup    " keep a backup file
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
-set history=50    " keep 50 lines of command line history
-set ruler    " show the cursor position all the time
-set showcmd    " display incomplete commands
-set incsearch    " do incremental searching
+
+"Always show current position
+set ruler
+
+" Height of the command bar
+set cmdheight=2
+
+" A buffer becomes hidden when it is abandoned
+set hid
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+" Ignore case when searching
 set ignorecase
 
-set wildmode=longest,full
+" When searching try to be smart about cases 
+set smartcase
 
-" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
-" let &guioptions = substitute(&guioptions, "t", "", "g")
+" Highlight search results
+set hlsearch
 
-" Don't use Ex mode, use Q for formatting
-map Q gq
+" Makes search act like search in modern browsers
+set incsearch 
 
-" This is an alternative that also works in block mode, but the deleted
-" text is lost and it only works for putting the current register.
-"vnoremap p "_dp
+" Don't redraw while executing macros (good performance config)
+set lazyredraw 
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-  syntax on
-  au BufNewFile,BufRead *.txx set filetype=cpp
-  au BufNewFile,BufRead *.cu set filetype=cpp
-  set hlsearch
+" For regular expressions turn magic on
+set magic
+
+" Show matching brackets when text indicator is over them
+set showmatch 
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" Properly disable sound on errors on MacVim
+if has("gui_macvim")
+    autocmd GUIEnter * set vb t_vb=
 endif
 
-set mouse=a
-set shiftwidth=2
-set autowrite
-compiler gcc
 
-" Only do this part when compiled with support for autocommands.
-if has("autocmd")
+" Add a bit extra margin to the left
+set foldcolumn=1
 
-  " Enable file type detection.
-  " Use the default filetype settings, so that mail gets 'tw' set to 72,
-  " 'cindent' is on in C files, etc.
-  " Also load indent files, to automatically do language-dependent indenting.
-  filetype plugin indent on
 
-  " Put these in an autocmd group, so that we can delete them easily.
-  augroup vimrcEx
-    au!
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enable syntax highlighting
+syntax enable 
 
-    " For all text files set 'textwidth' to 78 characters.
-    autocmd FileType text setlocal textwidth=78
-
-    " When editing a file, always jump to the last known cursor position.
-    " Don't do it when the position is invalid or when inside an event handler
-    " (happens when dropping a file on gvim).
-    autocmd BufReadPost *
-          \ if line("'\"") > 0 && line("'\"") <= line("$") |
-          \   exe "normal g`\"" |
-          \ endif
-
-  augroup END
-
-else
-
-  set autoindent    " always set autoindenting on
-
-endif " has("autocmd")
-
-if has("gui_running")
-  set guifont=Monospace\ 11
+" Enable 256 colors palette in Gnome Terminal
+if $COLORTERM == 'gnome-terminal'
+    set t_Co=256
 endif
 
-set sw=2
-
-filetype on
-" set foldmethod=marker foldmarker=<<<,>>>
-set foldmethod=syntax
-set foldlevel=0
-noremap , 5h
-noremap . 5l
-nnoremap s :syntax sync fromstart<CR>
-
-set nowrap
-set tabstop=2
-set shiftwidth=2
-set expandtab 
+try
+    colorscheme desert
+catch
+endtry
 
 set background=dark
-set foldcolumn=8
 
-set number
-"set numberwidth=4
+" Set extra options when running in GUI mode
+if has("gui_running")
+    set guioptions-=T
+    set guioptions-=e
+    set t_Co=256
+    set guitablabel=%M\ %t
+endif
 
-function! PrintSyntaxItem()
-  let l:colorsyntax = synIDattr(synID(line("."), col("."), 0), "name")
-  execute "highlight" l:colorsyntax
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs ;)
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+
+""""""""""""""""""""""""""""""
+" => Visual mode related
+""""""""""""""""""""""""""""""
+" Visual mode pressing * or # searches for the current selection
+" Super useful! From an idea by Michael Naumann
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+map <space> /
+map <c-space> ?
+
+" Disable highlight when <leader><cr> is pressed
+map <silent> <leader><cr> :noh<cr>
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Close the current buffer
+map <leader>bd :Bclose<cr>:tabclose<cr>gT
+
+" Close all the buffers
+map <leader>ba :bufdo bd<cr>
+
+map <leader>l :bnext<cr>
+map <leader>h :bprevious<cr>
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove 
+map <leader>t<leader> :tabnext 
+
+" Let 'tl' toggle between this and the last accessed tab
+let g:lasttab = 1
+nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+" Specify the behavior when switching between buffers 
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+
+""""""""""""""""""""""""""""""
+" => Status line
+""""""""""""""""""""""""""""""
+" Always show the status line
+set laststatus=2
+
+" Format the status line
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remap VIM 0 to first non-blank character
+map 0 ^
+
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+if has("mac") || has("macunix")
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
+endif
+
+" Delete trailing white space on save, useful for some filetypes ;)
+fun! CleanExtraSpaces()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfun
+
+if has("autocmd")
+    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+" Shortcuts using <leader>
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>s? z=
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Misc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remove the Windows ^M - when the encodings gets messed up
+noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+
+" Quickly open a buffer for scribble
+map <leader>q :e ~/buffer<cr>
+
+" Quickly open a markdown buffer for scribble
+map <leader>x :e ~/buffer.md<cr>
+
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Helper functions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    endif
+    return ''
 endfunction
-nnoremap ; :call PrintSyntaxItem()<CR>
-nnoremap t :TlistToggle<CR>
 
+" Don't close window, when deleting a buffer
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+    let l:currentBufNum = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
 
-"highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
-highlight LineNr term=bold cterm=NONE ctermfg=Gray ctermbg=NONE gui=NONE guifg=Cyan guibg=NONE
-hi FoldColumn ctermfg=Yellow ctermbg=NONE 
-hi Folded ctermfg=Yellow ctermbg=NONE 
+    if buflisted(l:alternateBufNum)
+        buffer #
+    else
+        bnext
+    endif
 
-hi PreProc ctermfg=DarkMagenta ctermbg=NONE 
-hi PreCondit ctermfg=DarkMagenta ctermbg=NONE 
-hi cSpecial ctermfg=DarkMagenta ctermbg=NONE 
+    if bufnr("%") == l:currentBufNum
+        new
+    endif
 
-hi cComment ctermfg=Cyan ctermbg=NONE 
-hi cCommentL ctermfg=Cyan ctermbg=NONE 
-
-hi cIncluded ctermfg=DarkRed ctermbg=NONE 
-hi cppBoolean ctermfg=DarkRed ctermbg=NONE 
-hi cCppString ctermfg=DarkRed ctermbg=NONE 
-hi cConstant ctermfg=DarkRed ctermbg=NONE 
-hi cString ctermfg=DarkRed ctermbg=NONE 
-hi cNumber ctermfg=DarkRed ctermbg=NONE 
-hi cFloat ctermfg=DarkRed ctermbg=NONE 
-
-hi cppStatement ctermfg=brown ctermbg=NONE 
-hi cConditional ctermfg=brown ctermbg=NONE 
-hi cStatement ctermfg=brown ctermbg=NONE 
-hi cUserLabel ctermfg=brown ctermbg=NONE 
-hi cRepeat ctermfg=brown ctermbg=NONE 
-hi cLabel ctermfg=brown ctermbg=NONE 
-
-hi cType ctermfg=DarkGreen ctermbg=NONE 
-hi cStructure ctermfg=DarkGreen ctermbg=NONE 
-hi cStorageClass ctermfg=DarkGreen ctermbg=NONE 
-
-highlight Search ctermfg=Black ctermbg=Yellow
-
-set foldtext=MyFoldText2()
-function MyFoldText2()
-  let nucolwidth = &fdc + &number*&numberwidth
-  let winwd = winwidth(0) - nucolwidth - 5
-  let foldlinecount = foldclosedend(v:foldstart) - foldclosed(v:foldstart) + 1
-  let prefix = " _______>>> "
-  let fdnfo = prefix . string(v:foldlevel) . "," . string(foldlinecount)
-  let line =  strpart(getline(v:foldstart), 0 , winwd - len(fdnfo)) 
-        \ . " ... " . strpart(getline(v:foldend), 0 , winwd - len(fdnfo)) 
-  let fillcharcount = winwd - len(line) - len(fdnfo)
-  return line . repeat(" ",fillcharcount) . fdnfo
+    if buflisted(l:currentBufNum)
+        execute("bdelete! ".l:currentBufNum)
+    endif
 endfunction
 
-"syn region cMyFold start="#if" end="#end" transparent fold contains=ALL
-"syn region myFold start="\#if" end="\#end" transparent fold
-"syn sync fromstart
-"set foldmethod=syntax
+function! CmdLine(str)
+    call feedkeys(":" . a:str)
+endfunction 
 
-let c_space_errors = 1
-let c_no_comment_fold=1
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
 
-set completeopt=longest,menuone
-"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-"let g:SuperTabDefaultCompletionType = "context"
+    let l:pattern = escape(@", "\\/.*'$^~[]")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-highlight Pmenu ctermbg=238 ctermfg=Red gui=bold
-hi Pmenu      ctermfg=Cyan    ctermbg=DarkGray  cterm=None guifg=Cyan guibg=DarkBlue
-hi PmenuSel   ctermfg=White   ctermbg=238 cterm=Bold guifg=White guibg=DarkBlue gui=Bold
-hi PmenuSbar                  ctermbg=Cyan            guibg=Cyan
-hi PmenuThumb ctermfg=White                           guifg=White
+    if a:direction == 'gv'
+        call CmdLine("Ack '" . l:pattern . "' " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
 
-
-"inoremap <expr> <buffer> . MyFunction()
-"set rtp+=~/.vam/vim-addon-manager
-"call vam#ActivateAddons(["FuzzyFinder"])
-
-"-------------------------------------------------------------------------------
-
-" Color test: Save this file, then enter ':so %'
-" " Then enter one of following commands:
-" "   :VimColorTest    "(for console/terminal Vim)
-" "   :GvimColorTest   "(for GUI gvim)
-function! VimColorTest(outfile, fgend, bgend)
-  let result = []
-  for fg in range(a:fgend)
-    for bg in range(a:bgend)
-      let kw = printf('%-7s', printf('c_%d_%d', fg, bg))
-      let h = printf('hi %s ctermfg=%d ctermbg=%d', kw, fg, bg)
-      let s = printf('syn keyword %s %s', kw, kw)
-      call add(result, printf('%-32s | %s', h, s))
-    endfor
-  endfor
-  call writefile(result, a:outfile)
-  execute 'edit '.a:outfile
-  source %
+    let @/ = l:pattern
+    let @" = l:saved_reg
 endfunction
-command! VimColorTest call VimColorTest('vim-color-test.tmp', 12, 16)
-function! GvimColorTest(outfile)
-  let result = []
-  for red in range(0, 255, 16)
-    for green in range(0, 255, 16)
-      for blue in range(0, 255, 16)
-        let kw = printf('%-13s', printf('c_%d_%d_%d', red, green, blue))
-        let fg = printf('#%02x%02x%02x', red, green, blue)
-        let bg = '#fafafa'
-        let h = printf('hi %s guifg=%s guibg=%s', kw, fg, bg)
-        let s = printf('syn keyword %s %s', kw, kw)
-        call add(result, printf('%s | %s', h, s))
-      endfor
-    endfor
-  endfor
-  call writefile(result, a:outfile)
-  execute 'edit '.a:outfile
-  source %
-endfunction
-command! GvimColorTest call GvimColorTest('gvim-color-test.tmp')
-
-hi CursorLine ctermbg=black cterm=none
-au InsertEnter * set cursorline
-au InsertLeave * set nocursorline
-
-set viminfo='20,<1000
