@@ -12,15 +12,15 @@ sudo cp .tmux.conf ~
 sudo cp .bashrc ~
 sudo cp .profile ~
 
-pip3 install -r ./requirements.txt --user
+# dev machine, no need to install these packages.
+# pip3 install -r ./requirements.txt --user
 
 
-# pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp37-cp37m-linux_x86_64.whl
-# pip3 install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp37-cp37m-linux_x86_64.whl
+# .vimrc
+cp .vimrc ~/
 
-
-cd ~/
-git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
-sh ~/.vim_runtime/install_awesome_vimrc.sh
+# another vim setup
+# git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
+# sh ~/.vim_runtime/install_awesome_vimrc.sh
 
 
