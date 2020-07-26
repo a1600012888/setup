@@ -142,6 +142,7 @@ try
     colorscheme desert
 catch
 endtry
+" ron is cool too
 
 set background=dark
 
